@@ -44,6 +44,7 @@ class GoogleMapProvider(
             fragmentManager.beginTransaction()
                 .remove(mapFragment)
                 .commitAllowingStateLoss()
+            mapCache.onNext(DEFAULT)
         }
 
         emitter.onNext(mapFragment)

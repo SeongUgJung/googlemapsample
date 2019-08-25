@@ -22,9 +22,7 @@ class GoogleMapProvider(
     private val resourceProvider: ResourceProvider,
     private val schedulerManager: SchedulerManager
 ) : MapProvider {
-    private val mapCache: BehaviorSubject<Map> = BehaviorSubject.createDefault(
-        DEFAULT
-    )
+    private val mapCache: BehaviorSubject<Map> = BehaviorSubject.createDefault(DEFAULT)
 
     override fun initMap(): Observable<Map> {
         return Observable.create(this::addMapFragment)
@@ -54,17 +52,14 @@ class GoogleMapProvider(
     private fun waitingForLoading(mapFragment: SupportMapFragment): Single<Map> {
         return Single.create { emitter: SingleEmitter<Map> ->
             mapFragment.getMapAsync { map: GoogleMap? ->
-                map?.let { actualMap ->
-                    actualMap.setOnMapLoadedCallback {
-                        emitter.onSuccess(
-                            GoogleMapImpl(
-                                actualMap,
-                                resourceProvider,
-                                schedulerManager
-                            )
-                        )
-                    }
-                } ?: run { emitter.tryOnError(IllegalStateException("No Map")) }
+                if (map == null) {
+                    emitter.tryOnError(IllegalStateException("No Map"))
+                    return@getMapAsync
+                }
+
+                map.setOnMapLoadedCallback {
+                    emitter.onSuccess(GoogleMapImpl(map, resourceProvider, schedulerManager))
+                }
             }
         }
     }

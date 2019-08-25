@@ -14,6 +14,7 @@ class MapApplication : MultiDexApplication() {
         super.onCreate()
 
         component = DaggerApplicationComponent.builder()
+            .application(this)
             .build().apply { inject(this@MapApplication) }
 
         Timber.plant(Timber.DebugTree())

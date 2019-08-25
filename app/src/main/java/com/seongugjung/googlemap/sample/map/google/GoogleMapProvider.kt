@@ -5,6 +5,8 @@ import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.libraries.maps.GoogleMap
 import com.google.android.libraries.maps.SupportMapFragment
+import com.seongugjung.googlemap.sample.base.resources.ResourceProvider
+import com.seongugjung.googlemap.sample.base.rx.SchedulerManager
 import com.seongugjung.googlemap.sample.map.DEFAULT
 import com.seongugjung.googlemap.sample.map.Map
 import com.seongugjung.googlemap.sample.map.MapParams
@@ -17,7 +19,9 @@ import io.reactivex.subjects.BehaviorSubject
 
 class GoogleMapProvider(
     private val fragmentManager: FragmentManager,
-    private val mapParams: MapParams
+    private val mapParams: MapParams,
+    private val resourceProvider: ResourceProvider,
+    private val schedulerManager: SchedulerManager
 ) : MapProvider {
     private val mapCache: BehaviorSubject<Map> = BehaviorSubject.createDefault(
         DEFAULT
@@ -52,7 +56,7 @@ class GoogleMapProvider(
             mapFragment.getMapAsync { map: GoogleMap? ->
                 map?.let { actualMap ->
                     actualMap.setOnMapLoadedCallback {
-                        emitter.onSuccess(GoogleMapImpl(actualMap))
+                        emitter.onSuccess(GoogleMapImpl(actualMap, resourceProvider, schedulerManager))
                     }
                 } ?: run { emitter.tryOnError(IllegalStateException("No Map")) }
             }

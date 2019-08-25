@@ -14,6 +14,36 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/wrapper"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <CheckBox
+                android:id="@+id/google_apec"
+                android:text="Google Singapore"
+                android:checked="@={viewModel.google}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <CheckBox
+                android:id="@+id/facebook"
+                android:text="Facebook Singapore"
+                android:checked="@={viewModel.facebook}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <CheckBox
+                android:id="@+id/changi_airport"
+                android:text="Changi Airport"
+                android:checked="@={viewModel.changiAirport}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
         <Button
             android:id="@+id/move"
             android:layout_width="wrap_content"
@@ -21,7 +51,7 @@
             android:onClick="@{() -> viewModel.moveCenter()}"
             android:text="Move to Center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/wrapper" />
 
         <FrameLayout
             android:id="@+id/map"

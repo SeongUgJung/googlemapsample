@@ -3,6 +3,7 @@ package com.seongugjung.googlemap.sample.di.mapactivity
 import androidx.fragment.app.FragmentManager
 import com.seongugjung.googlemap.sample.R
 import com.seongugjung.googlemap.sample.base.RxLifecycleDelegate
+import com.seongugjung.googlemap.sample.base.resources.ResourceProvider
 import com.seongugjung.googlemap.sample.base.rx.SchedulerManager
 import com.seongugjung.googlemap.sample.di.ActivityScope
 import com.seongugjung.googlemap.sample.map.MapController
@@ -12,6 +13,7 @@ import com.seongugjung.googlemap.sample.map.mapParams
 import com.seongugjung.googlemap.sample.view.MapActivity
 import com.seongugjung.googlemap.sample.view.MapViewModel
 import com.seongugjung.googlemap.sample.view.mapinteractors.CenterInteractor
+import com.seongugjung.googlemap.sample.view.mapinteractors.MarkerInteractor
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Module
@@ -47,37 +49,48 @@ interface MapActivityComponent {
         fun provideMapController(
             lifecycleDelegate: RxLifecycleDelegate,
             mapProvider: MapProvider,
-            interactors: CenterInteractor
+            centerInteractor: CenterInteractor,
+            markerInteractor: MarkerInteractor
         ): MapController {
-            return MapController(lifecycleDelegate, mapProvider, interactors)
+            return MapController(lifecycleDelegate, mapProvider, centerInteractor, markerInteractor)
         }
 
         @JvmStatic
         @Provides
         @ActivityScope
-        fun centerInteractor(): CenterInteractor = CenterInteractor()
+        fun centerInteractor() = CenterInteractor()
+
+        @JvmStatic
+        @Provides
+        @ActivityScope
+        fun markerInteractor() = MarkerInteractor()
 
         @JvmStatic
         @Provides
         @ActivityScope
         fun mapViewModel(
             lifecycleDelegate: RxLifecycleDelegate,
-            centerInteractor: CenterInteractor
+            centerInteractor: CenterInteractor,
+            markerInteractor: MarkerInteractor
         ): MapViewModel {
-            return MapViewModel(lifecycleDelegate, centerInteractor)
+            return MapViewModel(lifecycleDelegate, centerInteractor, markerInteractor)
         }
+
 
         @JvmStatic
         @Provides
         @ActivityScope
         fun provideMapProvider(
-            fragmentManager: FragmentManager
+            fragmentManager: FragmentManager,
+            schedulerManager: SchedulerManager,
+            resourceProvider: ResourceProvider
         ): MapProvider {
             return GoogleMapProvider(
                 fragmentManager,
                 mapParams {
                     mapContentId { R.id.map }
-                })
+                }, resourceProvider, schedulerManager
+            )
         }
 
     }
@@ -85,4 +98,5 @@ interface MapActivityComponent {
 
 interface MapActivityDependency {
     fun rxSchedulerManager(): SchedulerManager
+    fun resourceProvider(): ResourceProvider
 }

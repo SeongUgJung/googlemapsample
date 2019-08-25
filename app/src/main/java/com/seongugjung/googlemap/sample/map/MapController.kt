@@ -4,6 +4,9 @@ import com.seongugjung.googlemap.sample.base.RxLifecycleDelegate
 import com.seongugjung.googlemap.sample.base.onInit
 import com.seongugjung.googlemap.sample.base.onVisible
 import io.reactivex.Observable
+import io.reactivex.functions.Consumer
+import io.reactivex.internal.functions.Functions
+import timber.log.Timber
 
 class MapController(
     private val lifecycleDelegate: RxLifecycleDelegate,
@@ -20,7 +23,7 @@ class MapController(
                             mapInteractor.onInit(map)
                         }
                 }
-                .subscribe()
+                .subscribe(Functions.EMPTY_ACTION, Consumer { Timber.e(it) })
         }
 
         +onVisible {
@@ -31,7 +34,7 @@ class MapController(
                             mapInteractor.onVisible(map)
                         }
                 }
-                .subscribe()
+                .subscribe(Functions.EMPTY_ACTION, Consumer { Timber.e(it) })
         }
     }
 

@@ -1,6 +1,5 @@
 package com.seongugjung.googlemap.sample.map.google
 
-import android.R
 import android.view.View
 import androidx.fragment.app.FragmentManager
 import com.google.android.libraries.maps.GoogleMap
@@ -28,8 +27,8 @@ class GoogleMapProvider(
     )
 
     override fun initMap(): Observable<Map> {
-        return Observable.create(this::addMapFragment).
-            switchMapSingle(this::waitingForLoading)
+        return Observable.create(this::addMapFragment)
+            .switchMapSingle(this::waitingForLoading)
             .doOnNext(mapCache::onNext)
     }
 
@@ -37,7 +36,7 @@ class GoogleMapProvider(
         val mapFragment = SupportMapFragment()
         mapFragment.retainInstance = false
         fragmentManager.beginTransaction()
-            .replace(mapParams.resId.takeIf { it != View.NO_ID } ?: R.id.content,
+            .replace(mapParams.resId.takeIf { it != View.NO_ID } ?: android.R.id.content,
                 mapFragment)
             .commit()
 
@@ -56,7 +55,13 @@ class GoogleMapProvider(
             mapFragment.getMapAsync { map: GoogleMap? ->
                 map?.let { actualMap ->
                     actualMap.setOnMapLoadedCallback {
-                        emitter.onSuccess(GoogleMapImpl(actualMap, resourceProvider, schedulerManager))
+                        emitter.onSuccess(
+                            GoogleMapImpl(
+                                actualMap,
+                                resourceProvider,
+                                schedulerManager
+                            )
+                        )
                     }
                 } ?: run { emitter.tryOnError(IllegalStateException("No Map")) }
             }
